@@ -1,33 +1,29 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useAuth } from './AuthContext'; // Import AuthContext
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
-    const { login } = useAuth(); // Use login function from context
-    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [showPassword, setShowPassword] = useState(false);
-    const navigate = useNavigate(); // Initialize navigate
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError(''); // Reset error message
+        setError('');
 
         try {
-            const response = await axios.post('http://localhost:5002/login', {
-                username,
-                password,
-            });
+            const response = await axios.post('http://localhost:5001/login', { email, password });
 
             if (response.status === 200) {
-                login(username, response.data.token); // Call login from context
-                // alert('Login successful!');
-                navigate('/home'); // Redirect to home page on successful login
+                console.log("Logged In")
+                navigate('/home'); // Redirect on success
+                console.log("Logged In")
             }
         } catch (err) {
-            setError('Login failed. Please check your username and password.');
+            setError('Login failed. Please check your email and password.');
             console.error(err);
         }
     };
@@ -39,15 +35,15 @@ const Login = () => {
                 {error && <p className="text-red-500 text-center">{error}</p>}
                 <form onSubmit={handleSubmit}>
                     <div className="mb-4">
-                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="username">
-                            Username
+                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
+                            Email
                         </label>
                         <input
                             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                            type="text"
-                            id="username"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
+                            type="email"
+                            id="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                             required
                         />
                     </div>
@@ -66,7 +62,7 @@ const Login = () => {
                         <span
                             className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer"
                             onClick={() => setShowPassword(!showPassword)}
-                            style={{ top: '70%', transform: 'translateY(-50%)' }} // Center vertically
+                            style={{ top: '70%', transform: 'translateY(-50%)' }}
                         >
                             <i className={`fas ${showPassword ? 'fa-eye' : 'fa-eye-slash'}`}></i>
                         </span>

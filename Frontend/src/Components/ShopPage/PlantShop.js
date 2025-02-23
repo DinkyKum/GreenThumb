@@ -67,7 +67,7 @@ const PlantShop = () => {
   useEffect(() => {
     // Fetch plants from MongoDB through API
     const fetchPlants = async () => {
-      try {
+      try { 
         const response = await fetch("http://localhost:5001/api/plants");
         const data = await response.json();
         setAllPlants(data);
@@ -90,7 +90,7 @@ const PlantShop = () => {
             `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apiKey}`
           );
           const data = await response.json();
-          console.log(data);
+         
 
           // Convert temperature from Kelvin to Celsius
           const tempInCelsius = data.main.temp - 273.15;
@@ -113,7 +113,7 @@ const PlantShop = () => {
         console.error("Error getting location:", error);
       }
     );
-  }, [allPlants]);
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-100 p-8">

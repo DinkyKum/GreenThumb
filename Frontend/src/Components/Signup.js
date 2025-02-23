@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate, Link } from 'react-router-dom';
 
 const Signup = () => {
-  const [username, setUsername] = useState('');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,17 +22,25 @@ const Signup = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:5002/signup', {
-        username,
+      const response = await axios.post('http://localhost:5001/signup', {
+        name,
+        email,
         password,
       });
 
-      if (response.status === 201) {
+      console.log("Signup Response:", response);
+
+      if (response.status === 200) {
         alert('Signup successful!');
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+
+        // ✅ Navigate to home page
+        navigate('/home');
       }
     } catch (err) {
-      setError('Signup failed. Please try again.');
-      console.error(err);
+      console.error("Signup Error:", err.response?.data || err);
+      setError(err.response?.data?.msg || 'Signup failed. Please try again.');
     }
   };
 
@@ -40,15 +51,28 @@ const Signup = () => {
         {error && <p className="text-red-500 text-center">{error}</p>}
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="username">
-              Username
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
+              Full Name
             </label>
             <input
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               type="text"
-              id="username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              id="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
+              Email
+            </label>
+            <input
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
@@ -67,7 +91,7 @@ const Signup = () => {
             <span
               className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer"
               onClick={() => setShowPassword(!showPassword)}
-              style={{ top: '70%', transform: 'translateY(-50%)' }} // Center vertically
+              style={{ top: '70%', transform: 'translateY(-50%)' }}
             >
               <i className={`fas ${showPassword ? 'fa-eye' : 'fa-eye-slash'}`}></i>
             </span>
@@ -87,7 +111,7 @@ const Signup = () => {
             <span
               className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer"
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              style={{ top: '70%', transform: 'translateY(-50%)' }} // Center vertically
+              style={{ top: '70%', transform: 'translateY(-50%)' }}
             >
               <i className={`fas ${showConfirmPassword ? 'fa-eye' : 'fa-eye-slash'}`}></i>
             </span>
@@ -100,9 +124,9 @@ const Signup = () => {
           </button>
           <p className="mt-4 text-center">
             Already have an account?{' '}
-            <a href="/" className="text-green-600 hover:underline">
+            <Link to="/login" className="text-green-600 hover:underline">
               Login here
-            </a>
+            </Link>
           </p>
         </form>
       </div>

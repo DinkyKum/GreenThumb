@@ -1,5 +1,6 @@
 const express = require("express");
 const plantRouter = express.Router();
+const Plant =require('../models/Plant');
 
 plantRouter.get("/", async (req, res) => {
     try {
